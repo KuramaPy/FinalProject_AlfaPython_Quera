@@ -1,27 +1,34 @@
 import socket
-import json
+import pandas as pd
+import io
 
-# تنظیمات کلاینت
-HOST = '127.0.0.1' # آدرس IP سرور
-PORT = 65432 # پورت سرور
+def client_program():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(('localhost', 5000))
 
-# ایجاد سوکت
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((HOST, PORT))
+    data = client_socket.recv(4096).decode()
+    data_io = io.StringIO(data)
+    df = pd.read_csv(data_io)
 
-# درخواست داده‌ها
-client_socket.sendall(b'GET DATA')
+    print("Data received from server.")
+    
+    # Analysis and visualization
+    mean_price = df['price'].mean()
+    print(f"Mean price of products: {mean_price}")
 
-data = client_socket.recv(1024)
-client_socket.close()
+    # Example visualization (this would be more detailed in practice)
+    import matplotlib.pyplot as plt
+    
+    df.plot(x='name', y='price', kind='bar', title='Product Prices')
+    plt.xlabel('Product')
+    plt.ylabel('Price')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.savefig('product_prices.png')
+    print("Plot saved as 'product_prices.png'.")
 
-# پردازش داده‌ها
-products_data = json.loads(data.decode('utf-8'))
-your_products = products_data['your_products']
-competitor_products = products_data['competitor_products']
+    client_socket.close()
 
-# نمایش داده‌ها
-print("Your Products:", your_products)
-print("Competitor Products:", competitor_products)
-
+if __name__ == '__main__':
+    client_program()
 
