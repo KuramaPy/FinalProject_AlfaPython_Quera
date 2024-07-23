@@ -1,6 +1,7 @@
 import socket
 import pandas as pd
 import io
+import matplotlib.pyplot as plt
 
 def client_program():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -12,13 +13,11 @@ def client_program():
 
     print("Data received from server.")
     
-    # Analysis and visualization
+    # Analysis
     mean_price = df['price'].mean()
     print(f"Mean price of products: {mean_price}")
 
-    # Example visualization (this would be more detailed in practice)
-    import matplotlib.pyplot as plt
-    
+    # Visualization
     df.plot(x='name', y='price', kind='bar', title='Product Prices')
     plt.xlabel('Product')
     plt.ylabel('Price')
@@ -29,6 +28,5 @@ def client_program():
 
     client_socket.close()
 
-if __name__ == '__main__':
+if name == 'main':
     client_program()
-
